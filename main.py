@@ -80,20 +80,20 @@ def handle_message(message):
     asyncio.run(search_and_send_results(message.chat.id, song_name))
 
 # Function to search for songs and send results
-async def search_and_send_results(chat_id, song_name):
+async def search_and_send_results(chat_id, song_name, num_results=3):
     data = await saavn.search_songs(song_name)
 
     if data and 'data' in data and data['data']:
-        result = data['data'][0]  # Take only the first item
-        title = result.get('title', '')
-        album = result.get('album', '')
-        url = result.get('url', '')
-        primary_artists = result['more_info'].get('primary_artists', '')
-        language = result['more_info'].get('language', '')
+        results = data['data'][:num_results]  # Take the specified number of items
+        for result in results:
+            title = result.get('title', '')
+            album = result.get('album', '')
+            url = result.get('url', '')
+            primary_artists = result['more_info'].get('primary_artists', '')
+            language = result['more_info'].get('language', '')
 
-        response = f"Title: {title}\nAlbum: {album}\nURL: {url}\nPrimary Artists: {primary_artists}\nLanguage: {language}"
-        bot.send_message(chat_id, response)
-
+            response = f"Title: {title}\nAlbum: {album}\nURL: {url}\nPrimary Artists: {primary_artists}\nLanguage: {language}"
+            bot.send_message(chat_id, response)
 
 
 
